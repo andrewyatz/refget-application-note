@@ -10,7 +10,7 @@ pip install -r requirements.txt
 
 ## MGnify hash clash analysis
 
-Downloading and processing a single MGnify protein file into a CSV file where columns are:
+Downloading and processing a single MGnify protein file into a compressed CSV file where columns are:
 
 - id
 - trunc512 checksum
@@ -33,7 +33,7 @@ Analysing trunc512 checksums can be achieved by first creating an intermediary f
 ```bash
 # Processing trunc512
 mkdir tmpsort
-cat mgy_proteins_*.csv | awk -F "," -v OFS=',' '{print $2,$4,$1}' | sort -k1,1 --temporary-directory=$PWD/tmpsort > trunc512.csv
+gunzip -dc mgy_proteins_*.csv.gz | awk -F "," -v OFS=',' '{print $2,$4,$1}' | sort -k1,1 --temporary-directory=$PWD/tmpsort > trunc512.csv
 ./compare.py trunc512.csv trunc512.report.csv
 ```
 
