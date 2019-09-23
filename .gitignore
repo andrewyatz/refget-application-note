@@ -107,3 +107,6 @@ venv.bak/
 /mgy_proteins*
 /output.csv
 /tmpdir
+/test/test-results
+/test/trash*
+/.vstags
