@@ -2,6 +2,7 @@
 
 import sys
 import os.path
+import gzip
 from os import path
 
 def process_file(file, output_file):
@@ -11,7 +12,7 @@ def process_file(file, output_file):
   if(path.exists(output_file) == True):
     os.remove(output_file)
 
-  with open(file, 'r', encoding='utf-8') as f:
+  with gzip.open(file, 'rt', encoding='utf-8') as f:
     with open(output_file, 'w', encoding='utf-8') as output:
       previous = []
       # Expected format input is
@@ -29,8 +30,8 @@ def process_file(file, output_file):
 
 def main():
   if(len(sys.argv) != 3):
-    print("Please provide the sorted comma separated file to process and output file")
-    print("./compare.py input.csv report.csv")
+    print("Please provide the commpressed sorted comma separated file to process and output file")
+    print("./compare.py input.csv.gz report.csv")
     sys.exit(0)
   process_file(sys.argv[1], sys.argv[2])
 

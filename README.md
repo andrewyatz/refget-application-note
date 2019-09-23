@@ -10,6 +10,10 @@ pip install -r requirements.txt
 
 ## MGnify hash clash analysis
 
+The following pipeline requires a minimum of 500GB of disk space. MGnify downloads total 136GB, intermediate compressed CSV files are 190GB and final sorted CSV file is ~170GB.
+
+### Processing MGnify FASTA files
+
 Downloading and processing a single MGnify protein file into a compressed CSV file where columns are:
 
 - id
@@ -30,14 +34,18 @@ Analysing trunc512 checksums can be achieved by first creating an intermediary f
 - protein sequence
 - id
 
+### Sorting MGnify checksums
+
 ```bash
 # Processing trunc512
 mkdir tmpsort
-gunzip -dc mgy_proteins_*.csv.gz | awk -F "," -v OFS=',' '{print $2,$4,$1}' | sort -k1,1 --temporary-directory=$PWD/tmpsort > trunc512.csv
-./compare.py trunc512.csv trunc512.report.csv
+gzip -dc mgy_proteins_*.csv.gz | awk -F "," -v OFS=',' '{print $2,$4,$1}' | sort -k1,1 --temporary-directory=$PWD/tmpsort | gzip -c > trunc512.csv.gz
+./compare.py trunc512.csv.gz trunc512.report.csv
 ```
 
-We sort the new formatby the 1st column (trunc512 checksum). These files will be very big so we allow sort to store intermediate sorted files locally as default TMPDIR is unlikely to be large enough.
+We sort the new format by the 1st column (trunc512 checksum). These files will be very big so when we allow sort to use `$PWD/tmpsort` as an intermediate sorting area as `$TMPDIR` is unlikely to be large enough.
+
+### Finding clashing checksums
 
 `compare.py` then scans the sorted list looking for checksum identity where underlying sequences are not identical. All clashing elements are reported back to output csv file where columns are:
 
